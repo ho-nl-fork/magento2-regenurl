@@ -1,6 +1,12 @@
 <?php
+/**
+ * Copyright © 2017 H&O E-commerce specialisten B.V. (http://www.h-o.nl/)
+ * See LICENSE.txt for license details.
+ */
+
 namespace Iazel\RegenProductUrl\Console\Command;
 
+use Magento\Framework\App\State;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputArgument;
@@ -14,31 +20,29 @@ use Magento\Store\Model\Store;
 
 class RegenerateProductUrlCommand extends Command
 {
-    /**
-     * @var ProductUrlRewriteGenerator
-     */
+    /** @var ProductUrlRewriteGenerator $productUrlRewriteGenerator */
     protected $productUrlRewriteGenerator;
 
-    /**
-     * @var UrlPersistInterface
-     */
+    /** @var UrlPersistInterface $urlPersist */
     protected $urlPersist;
 
-    /**
-     * @var ProductRepositoryInterface
-     */
+    /** @var Collection $collection */
     protected $collection;
 
+    /** @var State $state */
+    private $state;
+
     public function __construct(
-        \Magento\Framework\App\State $state,
+        State $state,
         Collection $collection,
         ProductUrlRewriteGenerator $productUrlRewriteGenerator,
         UrlPersistInterface $urlPersist
     ) {
-        $state->setAreaCode('adminhtml');
+        $this->state = $state;
         $this->collection = $collection;
         $this->productUrlRewriteGenerator = $productUrlRewriteGenerator;
         $this->urlPersist = $urlPersist;
+
         parent::__construct();
     }
 
@@ -56,13 +60,17 @@ class RegenerateProductUrlCommand extends Command
                 InputOption::VALUE_REQUIRED,
                 'Use the specific Store View',
                 Store::DEFAULT_STORE_ID
-            )
-            ;
+            );
+
         return parent::configure();
     }
 
     public function execute(InputInterface $inp, OutputInterface $out)
     {
+        if (! $this->state->getAreaCode()) {
+            $this->state->setAreaCode('adminhtml');
+        }
+
         $store_id = $inp->getOption('store');
         $this->collection->addStoreFilter($store_id)->setStoreId($store_id);
 
