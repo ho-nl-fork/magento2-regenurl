@@ -67,9 +67,7 @@ class RegenerateProductUrlCommand extends Command
 
     public function execute(InputInterface $inp, OutputInterface $out)
     {
-        if (! $this->state->getAreaCode()) {
-            $this->state->setAreaCode('adminhtml');
-        }
+        $this->state->setAreaCode('adminhtml');
 
         $store_id = $inp->getOption('store');
         $this->collection->addStoreFilter($store_id)->setStoreId($store_id);
