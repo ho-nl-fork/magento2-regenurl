@@ -34,8 +34,8 @@ class RegenerateProductUrlCommand extends Command
 
     public function __construct(
         State $state,
-        Collection $collection,
-        ProductUrlRewriteGenerator $productUrlRewriteGenerator,
+        Collection\Proxy $collection,
+        ProductUrlRewriteGenerator\Proxy $productUrlRewriteGenerator,
         UrlPersistInterface $urlPersist
     ) {
         $this->state = $state;
